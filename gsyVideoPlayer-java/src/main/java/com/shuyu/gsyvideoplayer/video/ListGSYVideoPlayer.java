@@ -1,12 +1,17 @@
 package com.shuyu.gsyvideoplayer.video;
 
+import android.app.Activity;
 import android.content.Context;
+import android.media.AudioManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
+import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.model.GSYVideoModel;
+import com.shuyu.gsyvideoplayer.utils.Debuger;
 import com.shuyu.gsyvideoplayer.video.base.GSYBaseVideoPlayer;
 import com.shuyu.gsyvideoplayer.video.base.GSYVideoPlayer;
 
@@ -14,7 +19,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import moe.codeest.enviews.ENDownloadView;
+
 /**
+ * 列表播放支持
  * Created by shuyu on 2016/12/20.
  */
 
@@ -128,4 +136,36 @@ public class ListGSYVideoPlayer extends StandardGSYVideoPlayer {
         super.onAutoCompletion();
     }
 
+
+    /**
+     * 开始状态视频播放，prepare时不执行  addTextureView();
+     */
+    @Override
+    protected void prepareVideo() {
+        startPrepare();
+    }
+
+
+    @Override
+    public void onPrepared() {
+        super.onPrepared();
+        addTextureView();
+    }
+
+    @Override
+    protected void changeUiToNormal() {
+        super.changeUiToNormal();
+        if (mHadPlay && mPlayPosition < (mUriList.size() - 1)) {
+            setViewShowState(mThumbImageViewLayout, GONE);
+            setViewShowState(mTopContainer, INVISIBLE);
+            setViewShowState(mBottomContainer, INVISIBLE);
+            setViewShowState(mStartButton, GONE);
+            setViewShowState(mLoadingProgressBar, VISIBLE);
+            setViewShowState(mBottomProgressBar, INVISIBLE);
+            setViewShowState(mLockScreen, GONE);
+            if (mLoadingProgressBar instanceof ENDownloadView) {
+                ((ENDownloadView) mLoadingProgressBar).start();
+            }
+        }
+    }
 }

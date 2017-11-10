@@ -1,5 +1,6 @@
 package com.example.gsyvideoplayer;
 
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.widget.NestedScrollView;
@@ -15,11 +16,9 @@ import com.example.gsyvideoplayer.utils.CommonUtil;
 import com.example.gsyvideoplayer.utils.JumpUtils;
 import com.example.gsyvideoplayer.video.SampleControlVideo;
 import com.shuyu.gsyvideoplayer.GSYBaseActivityDetail;
-import com.shuyu.gsyvideoplayer.GSYRenderView;
 import com.shuyu.gsyvideoplayer.builder.GSYVideoOptionBuilder;
 import com.shuyu.gsyvideoplayer.listener.GSYVideoGifSaveListener;
 import com.shuyu.gsyvideoplayer.listener.GSYVideoShotListener;
-import com.shuyu.gsyvideoplayer.listener.GSYVideoShotSaveListener;
 import com.shuyu.gsyvideoplayer.listener.LockClickListener;
 import com.shuyu.gsyvideoplayer.utils.Debuger;
 import com.shuyu.gsyvideoplayer.utils.FileUtils;
@@ -28,10 +27,6 @@ import com.shuyu.gsyvideoplayer.video.base.GSYBaseVideoPlayer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -95,10 +90,10 @@ public class DetailControlActivity extends GSYBaseActivityDetail {
         detailPlayer.setLockClickListener(new LockClickListener() {
             @Override
             public void onClick(View view, boolean lock) {
-                if (orientationUtils != null) {
-                    //配合下方的onConfigurationChanged
-                    orientationUtils.setEnable(!lock);
-                }
+                //if (orientationUtils != null) {
+                //配合下方的onConfigurationChanged
+                //orientationUtils.setEnable(!lock);
+                //}
             }
         });
 
@@ -166,7 +161,7 @@ public class DetailControlActivity extends GSYBaseActivityDetail {
                 .setIsTouchWiget(true)
                 .setRotateViewAuto(false)
                 .setLockLand(false)
-                .setShowFullAnimation(false)
+                .setShowFullAnimation(true)//打开动画
                 .setNeedLockFull(true)
                 .setSeekRatio(1);
     }
@@ -181,6 +176,50 @@ public class DetailControlActivity extends GSYBaseActivityDetail {
         super.onDestroy();
         mGifCreateHelper.cancelTask();
     }
+
+
+    /*******************************竖屏全屏开始************************************/
+
+    @Override
+    public void initVideo() {
+        super.initVideo();
+        //重载后实现点击，不横屏
+        if (getGSYVideoPlayer().getFullscreenButton() != null) {
+            getGSYVideoPlayer().getFullscreenButton().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //第一个true是否需要隐藏actionbar，第二个true是否需要隐藏statusbar
+                    getGSYVideoPlayer().startWindowFullscreen(DetailControlActivity.this, true, true);
+                }
+            });
+        }
+    }
+
+
+    /**
+     * 是否启动旋转横屏，true表示启动
+     *
+     * @return true
+     */
+    @Override
+    public boolean getDetailOrientationRotateAuto() {
+        return false;
+    }
+
+    //重载后关闭重力旋转
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        orientationUtils.setEnable(false);
+    }
+
+    //重载后不做任何事情，实现竖屏全屏
+    @Override
+    public void onQuitFullscreen(String url, Object... objects) {
+        super.onQuitFullscreen(url, objects);
+    }
+
+    /*******************************竖屏全屏结束************************************/
 
     private void initGifHelper() {
         mGifCreateHelper = new GifCreateHelper(detailPlayer, new GSYVideoGifSaveListener() {

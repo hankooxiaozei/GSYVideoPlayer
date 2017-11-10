@@ -17,6 +17,7 @@ import android.view.Surface;
 import com.danikula.videocache.CacheListener;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.danikula.videocache.file.Md5FileNameGenerator;
+import com.danikula.videocache.headers.HeaderInjector;
 import com.shuyu.gsyvideoplayer.listener.GSYMediaPlayerListener;
 import com.shuyu.gsyvideoplayer.model.GSYModel;
 import com.shuyu.gsyvideoplayer.model.VideoOptionModel;
@@ -87,6 +88,9 @@ public class GSYVideoManager implements IMediaPlayer.OnPreparedListener, IMediaP
     //播放的tag，防止错位置，因为普通的url也可能重复
     private String playTag = "";
 
+    //header for cache
+    private Map<String, String> mMapHeadData;
+
     private Context context;
 
     //当前播放的视频宽的高
@@ -110,19 +114,55 @@ public class GSYVideoManager implements IMediaPlayer.OnPreparedListener, IMediaP
     //播放类型，默认IJK
     private int videoType = GSYVideoType.IJKPLAYER;
 
+    //log level
+    private int logLevel = IjkMediaPlayer.IJK_LOG_DEFAULT;
+
     //是否需要静音
     private boolean needMute = false;
 
     //是否需要外部超时判断
     private boolean needTimeOutOther;
 
-
+    /**
+     * 单例管理器
+     */
     public static synchronized GSYVideoManager instance() {
         if (videoManager == null) {
             videoManager = new GSYVideoManager(ijkLibLoader);
         }
         return videoManager;
     }
+
+    /**
+     * 同步创建一个临时管理器
+     */
+    public static synchronized GSYVideoManager tmpInstance(GSYMediaPlayerListener listener) {
+        GSYVideoManager gsyVideoManager = new GSYVideoManager(ijkLibLoader);
+        gsyVideoManager.buffterPoint = videoManager.buffterPoint;
+        gsyVideoManager.optionModelList = videoManager.optionModelList;
+        gsyVideoManager.cacheFile = videoManager.cacheFile;
+        gsyVideoManager.playTag = videoManager.playTag;
+        gsyVideoManager.mMapHeadData = videoManager.mMapHeadData;
+        gsyVideoManager.currentVideoWidth = videoManager.currentVideoWidth;
+        gsyVideoManager.currentVideoHeight = videoManager.currentVideoHeight;
+        gsyVideoManager.context = videoManager.context;
+        gsyVideoManager.lastState = videoManager.lastState;
+        gsyVideoManager.playPosition = videoManager.playPosition;
+        gsyVideoManager.timeOut = videoManager.timeOut;
+        gsyVideoManager.videoType = videoManager.videoType;
+        gsyVideoManager.needMute = videoManager.needMute;
+        gsyVideoManager.needTimeOutOther = videoManager.needTimeOutOther;
+        gsyVideoManager.setListener(listener);
+        return gsyVideoManager;
+    }
+
+    /**
+     * 替换管理器
+     */
+    public static synchronized void changeManager(GSYVideoManager gsyVideoManager) {
+        videoManager = gsyVideoManager;
+    }
+
 
     /**
      * 设置自定义so包加载类
@@ -208,22 +248,27 @@ public class GSYVideoManager implements IMediaPlayer.OnPreparedListener, IMediaP
     /**
      * 创建缓存代理服务,带文件目录的.
      */
-    private HttpProxyCacheServer newProxy(Context context, File file) {
+    public HttpProxyCacheServer newProxy(Context context, File file) {
         if (!file.exists()) {
             file.mkdirs();
         }
         HttpProxyCacheServer.Builder builder = new HttpProxyCacheServer.Builder(context);
         builder.cacheDirectory(file);
+        builder.headerInjector(new UserAgentHeadersInjector());
         cacheFile = file;
         return builder.build();
     }
 
+    public void setProxy(HttpProxyCacheServer proxy) {
+        this.proxy = proxy;
+    }
 
     /**
      * 创建缓存代理服务
      */
-    private HttpProxyCacheServer newProxy(Context context) {
-        return new HttpProxyCacheServer(context.getApplicationContext());
+    public HttpProxyCacheServer newProxy(Context context) {
+        return new HttpProxyCacheServer.Builder(context.getApplicationContext())
+                .headerInjector(new UserAgentHeadersInjector()).build();
     }
 
 
@@ -341,11 +386,13 @@ public class GSYVideoManager implements IMediaPlayer.OnPreparedListener, IMediaP
                 ((IjkMediaPlayer) mediaPlayer).setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
                 ((IjkMediaPlayer) mediaPlayer).setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
             }
+            mMapHeadData = ((GSYModel) msg.obj).getMapHeadData();
             ((IjkMediaPlayer) mediaPlayer).setDataSource(((GSYModel) msg.obj).getUrl(), ((GSYModel) msg.obj).getMapHeadData());
             mediaPlayer.setLooping(((GSYModel) msg.obj).isLooping());
             if (((GSYModel) msg.obj).getSpeed() != 1 && ((GSYModel) msg.obj).getSpeed() > 0) {
                 ((IjkMediaPlayer) mediaPlayer).setSpeed(((GSYModel) msg.obj).getSpeed());
             }
+            ((IjkMediaPlayer) mediaPlayer).native_setLogLevel(logLevel);
             initIJKOption((IjkMediaPlayer) mediaPlayer);
             //开启硬解码渲染优化
             if (GSYVideoType.isMediaCodecTexture()) {
@@ -360,6 +407,7 @@ public class GSYVideoManager implements IMediaPlayer.OnPreparedListener, IMediaP
     private void initEXOPlayer(Message msg) {
         mediaPlayer = new IjkExoMediaPlayer(context);
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mMapHeadData = null;
         try {
             mediaPlayer.setDataSource(context, Uri.parse(((GSYModel) msg.obj).getUrl()), ((GSYModel) msg.obj).getMapHeadData());
         } catch (IOException e) {
@@ -431,6 +479,16 @@ public class GSYVideoManager implements IMediaPlayer.OnPreparedListener, IMediaP
         }
     }
 
+    /**
+     * for android video cache header
+     */
+    private class UserAgentHeadersInjector implements HeaderInjector {
+
+        @Override
+        public Map<String, String> addHeaders(String url) {
+            return mMapHeadData;
+        }
+    }
 
     public void prepare(final String url, final Map<String, String> mapHeadData, boolean loop, float speed) {
         if (TextUtils.isEmpty(url)) return;
@@ -706,6 +764,17 @@ public class GSYVideoManager implements IMediaPlayer.OnPreparedListener, IMediaP
     public void setTimeOut(int timeOut, boolean needTimeOutOther) {
         this.timeOut = timeOut;
         this.needTimeOutOther = needTimeOutOther;
+    }
+
+    /**
+     * 设置log输入等级
+     *
+     */
+    public void setLogLevel(int logLevel) {
+        if (mediaPlayer != null && mediaPlayer instanceof IjkMediaPlayer) {
+            this.logLevel = logLevel;
+            ((IjkMediaPlayer) mediaPlayer).native_setLogLevel(logLevel);
+        }
     }
 
 }

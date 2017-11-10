@@ -13,12 +13,11 @@ import android.view.TextureView;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.google.android.exoplayer.text.TextRenderer;
-import com.shuyu.gsyvideoplayer.GSYRenderView;
-import com.shuyu.gsyvideoplayer.GSYVideoGLView;
+import com.shuyu.gsyvideoplayer.render.GSYRenderView;
+import com.shuyu.gsyvideoplayer.render.view.GSYVideoGLView;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
-import com.shuyu.gsyvideoplayer.effect.NoEffect;
-import com.shuyu.gsyvideoplayer.render.GSYVideoGLViewBaseRender;
+import com.shuyu.gsyvideoplayer.render.effect.NoEffect;
+import com.shuyu.gsyvideoplayer.render.glrender.GSYVideoGLViewBaseRender;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 
 /**
@@ -165,18 +164,22 @@ public abstract class GSYTextureRenderView extends FrameLayout implements Textur
      * 调整TextureView去适应比例变化
      */
     protected void changeTextureViewShowType() {
-        int params = getTextureParams();
-        ViewGroup.LayoutParams layoutParams = mTextureView.getLayoutParams();
-        layoutParams.width = params;
-        layoutParams.height = params;
-        mTextureView.setLayoutParams(layoutParams);
+        if (mTextureView != null) {
+            int params = getTextureParams();
+            ViewGroup.LayoutParams layoutParams = mTextureView.getLayoutParams();
+            layoutParams.width = params;
+            layoutParams.height = params;
+            mTextureView.setLayoutParams(layoutParams);
+        }
     }
 
     /**
      * 暂停时初始化位图
      */
     protected void initCover() {
-        mFullPauseBitmap = mTextureView.initCover();
+        if (mTextureView != null) {
+            mFullPauseBitmap = mTextureView.initCover();
+        }
     }
 
     /**
@@ -190,7 +193,7 @@ public abstract class GSYTextureRenderView extends FrameLayout implements Textur
     }
 
     protected GSYVideoGLView getGSYVideoGLSView() {
-        if (mTextureView.getShowView() instanceof GSYVideoGLView) {
+        if (mTextureView != null && mTextureView.getShowView() instanceof GSYVideoGLView) {
             return (GSYVideoGLView) mTextureView.getShowView();
         }
         return null;
@@ -211,7 +214,7 @@ public abstract class GSYTextureRenderView extends FrameLayout implements Textur
     }
 
     /**
-     *
+     * 获取渲染的代理层
      */
     public GSYRenderView getRenderProxy() {
         return mTextureView;

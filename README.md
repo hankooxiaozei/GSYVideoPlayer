@@ -17,11 +17,12 @@
 **支持**|**快播和慢播；网络视频加载速度。**
 **支持**|**调整显示比例:默认、16:9、4:3、填充。**
 **支持**|**播放时旋转画面角度（0,90,180,270）；镜像旋转。**
-**支持**|**暂停前后台切换不黑屏；调整不同清晰度的支持。**
+**支持**|**暂停前后台切换不黑屏；调整不同清晰度的支持；无缝切换支持。**
 **支持**|**Https；IJKPlayer和EXOPlayer切换。**
 **支持**|**锁定/解锁全屏点击功能；进度条小窗口预览（测试）。**
 **支持**|**全屏与非全屏两套布局切换；弹幕功能。**
 **支持**|**没有任何操作控件的纯播放支持。**
+**支持**|**Demo带有RecyclerView列表滑动自动播放。**
 待支持|**自带广告功能（目前需要自己实现）。**
 
 [![](https://jitpack.io/v/CarGuo/GSYVideoPlayer.svg)](https://jitpack.io/#CarGuo/GSYVideoPlayer)
@@ -39,21 +40,21 @@
 #### A、直接引入
 ```
 //完整版引入
-compile 'com.shuyu:GSYVideoPlayer:2.1.0'
+compile 'com.shuyu:GSYVideoPlayer:2.1.1'
 
 ```
 
 #### B、添加java和你想要的so支持：
 
 ```
-compile 'com.shuyu:gsyVideoPlayer-java:2.1.0'
+compile 'com.shuyu:gsyVideoPlayer-java:2.1.1'
 
 //根据你的需求
-compile 'com.shuyu:gsyVideoPlayer-armv5:2.1.0'
-compile 'com.shuyu:gsyVideoPlayer-armv7a:2.1.0'
-compile 'com.shuyu:gsyVideoPlayer-arm64:2.1.0'
-compile 'com.shuyu:gsyVideoPlayer-x64:2.1.0'
-compile 'com.shuyu:gsyVideoPlayer-x86:2.1.0'
+compile 'com.shuyu:gsyVideoPlayer-armv5:2.1.1'
+compile 'com.shuyu:gsyVideoPlayer-armv7a:2.1.1'
+compile 'com.shuyu:gsyVideoPlayer-arm64:2.1.1'
+compile 'com.shuyu:gsyVideoPlayer-x64:2.1.1'
+compile 'com.shuyu:gsyVideoPlayer-x86:2.1.1'
 
 ```
 
@@ -63,9 +64,9 @@ A、B普通版本支持263/264/265等，对于mpeg编码会有声音无画面情
 C 引入的so支持mpeg编码和其他补充协议，但是so包相对变大。
  
 ```
-compile 'com.shuyu:gsyVideoPlayer-java:2.1.0' 
+compile 'com.shuyu:gsyVideoPlayer-java:2.1.1'
 
-compile 'com.shuyu:gsyVideoPlayer-ex_so:2.1.0' 
+compile 'com.shuyu:gsyVideoPlayer-ex_so:2.1.1'
 
 ```
 
@@ -103,32 +104,26 @@ compile 'com.shuyu:gsyVideoPlayer-ex_so:2.1.0'
 * ### 3、弹幕
 <img src="https://github.com/CarGuo/GSYVideoPlayer/blob/master/55.gif" width="240px" height="426px"/>
 
-* ### 4、进度条小窗口预览
+* ### 4、滤镜和GL动画
+<img src="https://github.com/CarGuo/GSYVideoPlayer/blob/master/09.gif"/>
+
+* ### 5、进度条小窗口预览
 <img src="https://github.com/CarGuo/GSYVideoPlayer/blob/master/07.gif" height="240px"/>
 
 ## 五、近期版本
 
+### 2.1.1(2017-10-29)
+* videoCache模式支持增加header
+* 增加无缝切换视频DEMO SmartPickVideo
+* 调整部分代码路径，优化代码
+* log输入等级接口
+```
+GSYVideoManager.instance().setLogLevel(IjkMediaPlayer.IJK_LOG_SILENT);
+```
+
 ### 2.1.0(2017-10-10)
 * 增加了视频帧合成gif功能（DEMO DetailControlActivity中）。
 * update ijkplayer 0.84
-
-### 2.0.9(2017-10-02)
-* 增加顶层效果渲染的动画效果。
-* 增加截图功能。
-* 增加自定义render支持。
-* 增加水印、多重播放等。
-
-
-### 2.0.8（2017-09-17）
-* 增加GSYBaseActivityDetail抽象类，方便detail模式集成。
-* 内部增加一些优化。
-* 增加简单滤镜功能支持。
-```
-1、全局设置
-GSYVideoType.setRenderType(GSYVideoType.GLSURFACE);
-2、设置滤镜
-player.setEffectFilter(new BarrelBlurEffect());
-```
 
 
 ### 更多版本请查阅：[版本更新说明](https://github.com/CarGuo/GSYVideoPlayer/blob/master/UPDATE_VERSION.md)

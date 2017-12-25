@@ -1,6 +1,5 @@
 package com.example.gsyvideoplayer;
 
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.NestedScrollView;
@@ -11,8 +10,7 @@ import android.widget.RelativeLayout;
 
 import com.example.gsyvideoplayer.listener.SampleListener;
 import com.example.gsyvideoplayer.video.LandLayoutVideo;
-import com.shuyu.gsyvideoplayer.GSYVideoManager;
-import com.shuyu.gsyvideoplayer.model.VideoOptionModel;
+import com.shuyu.gsyvideoplayer.listener.GSYVideoProgressListener;
 import com.shuyu.gsyvideoplayer.video.base.GSYVideoPlayer;
 
 import com.shuyu.gsyvideoplayer.builder.GSYVideoOptionBuilder;
@@ -22,12 +20,8 @@ import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 
 public class DetailPlayer extends AppCompatActivity {
@@ -55,9 +49,13 @@ public class DetailPlayer extends AppCompatActivity {
         ButterKnife.bind(this);
 
         //断网自动重新链接，url前接上ijkhttphook:
-        //String url = "ijkhttphook:http://baobab.wdjcdn.com/14564977406580.mp4";
+        //String url = "ijkhttphook:https://res.exexm.com/cw_145225549855002";
 
-        String url = "http://baobab.wdjcdn.com/14564977406580.mp4";
+        //String url = "http://7xjmzj.com1.z0.glb.clouddn.com/20171026175005_JObCxCE2.mp4";
+
+        String url =  "http://video.7k.cn/app_video/20171202/6c8cf3ea/v.m3u8.mp4";
+        //String url = "http://video.7k.cn/app_video/20171213/276d8195/v.m3u8.mp4";
+        //String url = "http://103.233.191.21/riak/riak-bucket/6469ac502e813a4c1df7c99f364e70c1.mp4";
         //String url = "http://7xjmzj.com1.z0.glb.clouddn.com/20171026175005_JObCxCE2.mp4";
         //String url = "https://media6.smartstudy.com/ae/07/3997/2/dest.m3u8";
         //String url = "http://cdn.tiaobatiaoba.com/Upload/square/2017-11-02/1509585140_1279.mp4";
@@ -157,7 +155,14 @@ public class DetailPlayer extends AppCompatActivity {
                             orientationUtils.setEnable(!lock);
                         }
                     }
-                }).build(detailPlayer);
+                })
+                .setGSYVideoProgressListener(new GSYVideoProgressListener() {
+                    @Override
+                    public void onProgress(int progress, int secProgress, int currentPosition, int duration) {
+                        Debuger.printfLog(" progress " + progress + " secProgress " + secProgress + " currentPosition " + currentPosition + " duration " + duration);
+                    }
+                })
+                .build(detailPlayer);
 
         detailPlayer.getFullscreenButton().setOnClickListener(new View.OnClickListener() {
             @Override

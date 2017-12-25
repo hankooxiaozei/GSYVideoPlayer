@@ -1,6 +1,7 @@
 package com.example.gsyvideoplayer;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.opengl.Matrix;
 import android.os.Bundle;
@@ -16,6 +17,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.gsyvideoplayer.effect.BitmapIconEffect;
 import com.example.gsyvideoplayer.effect.GSYVideoGLViewCustomRender;
+import com.example.gsyvideoplayer.effect.GSYVideoGLViewCustomRender2;
+import com.example.gsyvideoplayer.effect.GSYVideoGLViewCustomRender4;
 import com.example.gsyvideoplayer.effect.PixelationEffect;
 import com.example.gsyvideoplayer.utils.CommonUtil;
 import com.example.gsyvideoplayer.video.SampleControlVideo;
@@ -107,7 +110,8 @@ public class DetailFilterActivity extends GSYBaseActivityDetail {
 
     private float deep = 0.8f;
 
-    private String url = "http://baobab.wdjcdn.com/14564977406580.mp4";
+    private String url = "https://res.exexm.com/cw_145225549855002";
+    //private String url = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4";
 
     private Timer timer = new Timer();
 
@@ -162,7 +166,8 @@ public class DetailFilterActivity extends GSYBaseActivityDetail {
         mGSYVideoGLViewCustomRender = new GSYVideoGLViewCustomRender();
         mCustomBitmapIconEffect = new BitmapIconEffect(bitmap, dp2px(50), dp2px(50), 0.6f);
         mGSYVideoGLViewCustomRender.setBitmapEffect(mCustomBitmapIconEffect);
-        detailPlayer.setCustomGLRenderer(mGSYVideoGLViewCustomRender);*/
+        detailPlayer.setCustomGLRenderer(mGSYVideoGLViewCustomRender);
+        detailPlayer.setGLRenderMode(GSYVideoGLView.MODE_RENDER_SIZE);*/
 
         //多窗口播放效果
         //detailPlayer.setEffectFilter(new GammaEffect(0.8f));
@@ -170,6 +175,11 @@ public class DetailFilterActivity extends GSYBaseActivityDetail {
 
         //图片穿孔透视播放
         //detailPlayer.setCustomGLRenderer(new GSYVideoGLViewCustomRender3());
+
+        //高斯拉伸视频铺满背景，替换黑色，前台正常比例播放
+        //detailPlayer.setEffectFilter(new GaussianBlurEffect(6.0f, GaussianBlurEffect.TYPEXY));
+        //detailPlayer.setCustomGLRenderer(new GSYVideoGLViewCustomRender4());
+        //detailPlayer.setGLRenderMode(GSYVideoGLView.MODE_RENDER_SIZE);
 
         changeFilter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -279,6 +289,7 @@ public class DetailFilterActivity extends GSYBaseActivityDetail {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //恢复到原本的绘制模式
         GSYVideoType.setRenderType(backupRendType);
         cancelTask();
     }

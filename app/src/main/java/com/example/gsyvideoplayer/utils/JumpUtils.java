@@ -24,7 +24,9 @@ import com.example.gsyvideoplayer.PlayPickActivity;
 import com.example.gsyvideoplayer.R;
 import com.example.gsyvideoplayer.RecyclerView2Activity;
 import com.example.gsyvideoplayer.RecyclerViewActivity;
+import com.example.gsyvideoplayer.ScrollingActivity;
 import com.example.gsyvideoplayer.WebDetailActivity;
+import com.example.gsyvideoplayer.WindowActivity;
 
 /**
  * Created by shuyu on 2016/11/11.
@@ -154,6 +156,26 @@ public class JumpUtils {
      */
     public static void goToDetailPlayer(Activity activity) {
         Intent intent = new Intent(activity, DetailPlayer.class);
+        activity.startActivity(intent);
+    }
+
+    /**
+     * 跳转到详情播放
+     *
+     * @param activity
+     */
+    public static void goToScrollDetailPlayer(Activity activity) {
+        Intent intent = new Intent(activity, ScrollingActivity.class);
+        activity.startActivity(intent);
+    }
+
+    /**
+     * 跳转到详情播放
+     *
+     * @param activity
+     */
+    public static void goToScrollWindow(Activity activity) {
+        Intent intent = new Intent(activity, WindowActivity.class);
         activity.startActivity(intent);
     }
 

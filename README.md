@@ -23,11 +23,14 @@
 **支持**|**全屏与非全屏两套布局切换；弹幕功能。**
 **支持**|**没有任何操作控件的纯播放支持。**
 **支持**|**Demo带有RecyclerView列表滑动自动播放。**
+**支持**|**多窗体下（包括桌面）的小窗口播放。**
 待支持|**自带广告功能（目前需要自己实现）。**
 
 [![](https://jitpack.io/v/CarGuo/GSYVideoPlayer.svg)](https://jitpack.io/#CarGuo/GSYVideoPlayer)
 [ ![Download](https://api.bintray.com/packages/carguo/GSYVideoPlayer/gsyVideoPlayer/images/download.svg) ](https://bintray.com/carguo/GSYVideoPlayer/gsyVideoPlayer/_latestVersion)
 [![Build Status](https://travis-ci.org/CarGuo/GSYVideoPlayer.svg?branch=master)](https://travis-ci.org/CarGuo/GSYVideoPlayer)
+
+### [微信赞赏链接](https://github.com/CarGuo/GSYVideoPlayer/blob/master/thanks.jpg)
 
 ## 一、使用依赖
 
@@ -40,21 +43,21 @@
 #### A、直接引入
 ```
 //完整版引入
-compile 'com.shuyu:GSYVideoPlayer:2.1.1'
+compile 'com.shuyu:GSYVideoPlayer:2.1.3'
 
 ```
 
 #### B、添加java和你想要的so支持：
 
 ```
-compile 'com.shuyu:gsyVideoPlayer-java:2.1.1'
+compile 'com.shuyu:gsyVideoPlayer-java:2.1.3'
 
 //根据你的需求
-compile 'com.shuyu:gsyVideoPlayer-armv5:2.1.1'
-compile 'com.shuyu:gsyVideoPlayer-armv7a:2.1.1'
-compile 'com.shuyu:gsyVideoPlayer-arm64:2.1.1'
-compile 'com.shuyu:gsyVideoPlayer-x64:2.1.1'
-compile 'com.shuyu:gsyVideoPlayer-x86:2.1.1'
+compile 'com.shuyu:gsyVideoPlayer-armv5:2.1.3'
+compile 'com.shuyu:gsyVideoPlayer-armv7a:2.1.3'
+compile 'com.shuyu:gsyVideoPlayer-arm64:2.1.3'
+compile 'com.shuyu:gsyVideoPlayer-x64:2.1.3'
+compile 'com.shuyu:gsyVideoPlayer-x86:2.1.3'
 
 ```
 
@@ -64,9 +67,9 @@ A、B普通版本支持263/264/265等，对于mpeg编码会有声音无画面情
 C 引入的so支持mpeg编码和其他补充协议，但是so包相对变大。
  
 ```
-compile 'com.shuyu:gsyVideoPlayer-java:2.1.1'
+compile 'com.shuyu:gsyVideoPlayer-java:2.1.3'
 
-compile 'com.shuyu:gsyVideoPlayer-ex_so:2.1.1'
+compile 'com.shuyu:gsyVideoPlayer-ex_so:2.1.3'
 
 ```
 
@@ -74,7 +77,8 @@ compile 'com.shuyu:gsyVideoPlayer-ex_so:2.1.1'
 
 ## 二、其他推荐
 
-### * QQ群，有兴趣的可以进来（群里平时吹水吐槽多）：174815284 。
+### * QQ群，有兴趣的欢迎（平时吹水吐槽多，因为人数饱和，目前开启付费入群）：174815284 。
+### * [GSYGithubAPP 跨平台github客户端](https://github.com/CarGuo/GSYGithubAPP)
 ### * [RickText](https://github.com/CarGuo/RickText)
 ### * [LazyRecyclerAdapter](https://github.com/CarGuo/LazyRecyclerAdapter)
 
@@ -107,24 +111,34 @@ compile 'com.shuyu:gsyVideoPlayer-ex_so:2.1.1'
 * ### 4、滤镜和GL动画
 <img src="https://github.com/CarGuo/GSYVideoPlayer/blob/master/09.gif"/>
 
-* ### 5、进度条小窗口预览
+* ### 6、背景铺满模糊播放
+
+<img src="https://github.com/CarGuo/GSYVideoPlayer/blob/master/99.png" width="426px" height="240px"/>
+
+* ### 7、进度条小窗口预览
 <img src="https://github.com/CarGuo/GSYVideoPlayer/blob/master/07.gif" height="240px"/>
 
 ## 五、近期版本
 
-### 2.1.1(2017-10-29)
-* videoCache模式支持增加header
-* 增加无缝切换视频DEMO SmartPickVideo
-* 调整部分代码路径，优化代码
-* log输入等级接口
+### 2.1.3（2017-12-24）
+* update demo gradle to 4.1
+* 增加对CollapsingToolbarLayout的支持与demo
+* 多窗体下（包括桌面）的小窗口播放（WindowActivity）。
+* 增加播放进度回调
 ```
-GSYVideoManager.instance().setLogLevel(IjkMediaPlayer.IJK_LOG_SILENT);
+/**
+ * 进度回调
+ */
+public void setGSYVideoProgressListener(GSYVideoProgressListener videoProgressListener)
 ```
 
-### 2.1.0(2017-10-10)
-* 增加了视频帧合成gif功能（DEMO DetailControlActivity中）。
-* update ijkplayer 0.84
-
+### 2.1.2(2017-12-08)
+* 增加针对Prepared之前调用OnVideoPause的处理
+* 背景视频模糊铺满，前方视频正常播放
+```
+DetailFilterActivity中注释的
+//高斯拉伸视频铺满背景，替换黑色，前台正常比例播放
+```
 
 ### 更多版本请查阅：[版本更新说明](https://github.com/CarGuo/GSYVideoPlayer/blob/master/UPDATE_VERSION.md)
 
@@ -169,6 +183,15 @@ GSYVideoManager.instance().setLogLevel(IjkMediaPlayer.IJK_LOG_SILENT);
 ## 依赖大小参考
 建议使用ndk过滤，详细参考 [参考第四条 ： 4、NDK的so支持](http://www.jianshu.com/p/86e4b336c17d)
 ![](https://ooo.0o0.ooo/2017/06/15/5941f343a39f5.png)
+
+
+## 非常感谢您的支持
+
+#### 撸码不易，如果对你有所帮助，欢迎您的赞赏
+
+##### 微信赞赏码
+
+<img src="https://github.com/CarGuo/GSYVideoPlayer/blob/master/thanks.jpg" height="400px" width="400px"/>
 
 
 ## License

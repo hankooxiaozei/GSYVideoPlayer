@@ -1,5 +1,27 @@
 ## 下方个版本说明，可以当做简单的wiki使用~，效果可参考DEMO。
 
+
+### 2.1.3（2017-12-24）
+* update demo gradle to 4.1
+* 增加对CollapsingToolbarLayout的支持与demo
+* 多窗体下（包括桌面）的小窗口播放（WindowActivity）。
+* 增加播放进度回调
+```
+/**
+ * 进度回调
+ */
+public void setGSYVideoProgressListener(GSYVideoProgressListener videoProgressListener)
+```
+
+### 2.1.2(2017-12-08)
+* 增加针对Prepared之前调用OnVideoPause的处理
+* 背景视频模糊铺满，前方视频正常播放
+```
+DetailFilterActivity中注释的
+//高斯拉伸视频铺满背景，替换黑色，前台正常比例播放
+```
+
+
 ### 2.1.1(2017-10-29)
 * videoCache模式支持增加header
 * 增加无缝切换视频DEMO SmartPickVideo

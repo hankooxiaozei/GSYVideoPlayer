@@ -62,6 +62,7 @@ public class WebDetailActivity extends GSYBaseActivityDetail {
                 if (orientationUtils != null) {
                     //配合下方的onConfigurationChanged
                     orientationUtils.setEnable(!lock);
+                    webPlayer.getCurrentPlayer().setRotateViewAuto(!lock);
                 }
             }
         });
@@ -70,6 +71,9 @@ public class WebDetailActivity extends GSYBaseActivityDetail {
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         webView.loadUrl("https://www.baidu.com");
+
+
+        orientationUtils.setRotateWithSystem(false);
 
         webTopLayout.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
@@ -110,7 +114,7 @@ public class WebDetailActivity extends GSYBaseActivityDetail {
 
     @Override
     public GSYVideoOptionBuilder getGSYVideoOptionBuilder() {
-        String url = "http://baobab.wdjcdn.com/14564977406580.mp4";
+        String url = "https://res.exexm.com/cw_145225549855002";
         //String url = "https://d131x7vzzf85jg.cloudfront.net/upload/documents/paper/b2/61/00/00/20160420_115018_b544.mp4";
         //增加封面。内置封面可参考SampleCoverVideo
         ImageView imageView = new ImageView(this);
@@ -119,6 +123,7 @@ public class WebDetailActivity extends GSYBaseActivityDetail {
                 .setThumbImageView(imageView)
                 .setUrl(url)
                 .setCacheWithPlay(false)
+                .setRotateWithSystem(false)
                 .setVideoTitle("测试视频")
                 .setIsTouchWiget(true)
                 .setRotateViewAuto(false)
